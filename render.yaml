@@ -14,3 +14,5 @@ services:
         value: https://neon-rps-arena.vercel.app
       - key: NODE_ENV
         value: production
+      - key: SKIP_NEXT
+        value: "true"

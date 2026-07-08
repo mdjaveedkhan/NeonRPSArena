@@ -1,4 +1,6 @@
-import next from "next";
+// Import `next` only when running the full Next app. For backend-only
+// deployments (e.g., Render) set `SKIP_NEXT=true` to avoid requiring
+// the `next` package at runtime.
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -7,8 +9,8 @@ import { Server } from "socket.io";
 import { registerRoomHandlers, roomCount, startRoomCleanup } from "./server/src/rooms.js";
 
 const dev = process.env.NODE_ENV !== "production";
-const app = next({ dev });
-const handle = app.getRequestHandler();
+let handle = null;
+let app = null;
 const PORT = process.env.PORT || 3000;
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || (dev ? "http://localhost:3000" : "*");
 
@@ -24,8 +26,19 @@ async function main() {
       console.warn('dotenv not loaded (package missing) — proceeding with process.env');
     }
   }
-  await app.prepare();
   const server = express();
+
+  // If SKIP_NEXT is not set, dynamically import Next and prepare it.
+  if (process.env.SKIP_NEXT !== "true") {
+    try {
+      const nextModule = await import('next');
+      app = nextModule.default({ dev });
+      handle = app.getRequestHandler();
+      await app.prepare();
+    } catch (err) {
+      console.warn('Next.js not initialized — continuing in backend-only mode');
+    }
+  }
 
   // During development Next's react-refresh/runtime uses eval which violates
   // strict Content Security Policies. Disable helmet's CSP in dev so the
@@ -46,7 +59,10 @@ async function main() {
     res.json({ status: "healthy", rooms: roomCount(), uptime: process.uptime() });
   });
 
-  server.all("*", (req, res) => handle(req, res));
+  // Only register the Next request handler when available.
+  if (handle) {
+    server.all("*", (req, res) => handle(req, res));
+  }
 
   const httpServer = createServer(server);
 
