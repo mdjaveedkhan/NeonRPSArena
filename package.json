@@ -3,14 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "description": "Production-ready multiplayer Rock Paper Scissors with React, Express, and Socket.IO.",
+  "type": "module",
   "scripts": {
-    "postinstall": "npm run install:all",
-    "install:all": "npm install --prefix server && npm install --prefix client",
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "build": "npm run build --prefix client",
-    "start": "npm start --prefix server"
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
   },
-  "devDependencies": {
-    "concurrently": "^9.2.1"
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "express": "^4.18.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "cors": "^2.8.5",
+    "helmet": "^8.1.0",
+    "dotenv": "^16.6.1",
+    "canvas-confetti": "^1.9.3"
   }
 }
