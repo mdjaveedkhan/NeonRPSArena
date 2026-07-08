@@ -6,7 +6,7 @@ services:
     repo: https://github.com/mdjaveedkhan/NeonRPSArena.git
     branch: main
     root: /
-    buildCommand: npm ci
+    buildCommand: npm install --production --no-audit --no-fund
     startCommand: npm run start
     autoDeploy: true
     envVars:
