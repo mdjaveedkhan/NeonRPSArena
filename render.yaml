@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: NeonRPSArena
+    env: node
+    plan: free
+    repo: https://github.com/mdjaveedkhan/NeonRPSArena.git
+    branch: main
+    root: /
+    buildCommand: npm ci
+    startCommand: npm run start
+    autoDeploy: true
+    envVars:
+      - key: CLIENT_ORIGIN
+        value: https://neon-rps-arena.vercel.app
+      - key: NODE_ENV
+        value: production
