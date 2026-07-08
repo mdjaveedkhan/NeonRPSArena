@@ -1,4 +1,3 @@
-import "dotenv/config";
 import next from "next";
 import express from "express";
 import helmet from "helmet";
@@ -14,6 +13,17 @@ const PORT = process.env.PORT || 3000;
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || (dev ? "http://localhost:3000" : "*");
 
 async function main() {
+  // Load dotenv only in development if available. This avoids a hard
+  // dependency on `dotenv` in production environments (Render provides
+  // env vars) and prevents deployment failures when `dotenv` isn't installed.
+  if (dev) {
+    try {
+      await import('dotenv/config');
+    } catch (err) {
+      // Ignore: dotenv may not be installed in production/build images.
+      console.warn('dotenv not loaded (package missing) — proceeding with process.env');
+    }
+  }
   await app.prepare();
   const server = express();
 
