@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "postinstall": "next build",
+    "postinstall": "node -e \"if(process.env.SKIP_NEXT!=='true'){require('child_process').execSync('next build',{stdio:'inherit'})}\"",
     "start": "node server.js"
   },
   "dependencies": {
